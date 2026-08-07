@@ -6,28 +6,34 @@ const formMessage = document.getElementById("formMessage");
 const currentYear = document.getElementById("currentYear");
 
 
-// MENÚ PARA CELULARES
+// MENÚ MOBILE
 
-menuButton.addEventListener("click", () => {
+if (menuButton && nav) {
 
-    nav.classList.toggle("active");
+    menuButton.addEventListener("click", () => {
 
-    const icon = menuButton.querySelector("i");
+        nav.classList.toggle("active");
 
-    if (nav.classList.contains("active")) {
+        const icon = menuButton.querySelector("i");
 
-        icon.classList.remove("fa-bars");
-        icon.classList.add("fa-xmark");
+        if (nav.classList.contains("active")) {
 
-    } else {
+            icon.classList.remove("fa-bars");
+            icon.classList.add("fa-xmark");
 
-        icon.classList.remove("fa-xmark");
-        icon.classList.add("fa-bars");
+        } else {
 
-    }
+            icon.classList.remove("fa-xmark");
+            icon.classList.add("fa-bars");
 
-});
+        }
 
+    });
+
+}
+
+
+// CERRAR MENÚ AL TOCAR UN LINK
 
 navLinks.forEach((link) => {
 
@@ -37,8 +43,12 @@ navLinks.forEach((link) => {
 
         const icon = menuButton.querySelector("i");
 
-        icon.classList.remove("fa-xmark");
-        icon.classList.add("fa-bars");
+        if (icon) {
+
+            icon.classList.remove("fa-xmark");
+            icon.classList.add("fa-bars");
+
+        }
 
     });
 
@@ -47,166 +57,309 @@ navLinks.forEach((link) => {
 
 // FORMULARIO HACIA WHATSAPP
 
-contactForm.addEventListener("submit", (event) => {
+if (contactForm) {
 
-    event.preventDefault();
+    contactForm.addEventListener("submit", (event) => {
 
-    const name = document.getElementById("name").value.trim();
-    const company = document.getElementById("company").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const message = document.getElementById("message").value.trim();
+        event.preventDefault();
 
-    const whatsappNumber = "5490000000000";
+        const name = document.getElementById("name").value.trim();
 
-    const whatsappMessage = `
-Hola Walter.
+        const company = document
+            .getElementById("company")
+            .value
+            .trim();
+
+        const service = document
+            .getElementById("service")
+            .value;
+
+        const email = document
+            .getElementById("email")
+            .value
+            .trim();
+
+        const message = document
+            .getElementById("message")
+            .value
+            .trim();
+
+
+        // NÚMERO DE WHATSAPP WMSI
+
+        const whatsappNumber = "542996052334";
+
+
+        const whatsappMessage = `
+Hola WMSI Soluciones.
 
 Mi nombre es ${name}.
-Empresa: ${company || "No indicada"}.
-Correo: ${email}.
+
+Empresa / emprendimiento:
+${company || "No indicado"}
+
+Servicio de interés:
+${service}
+
+Correo:
+${email}
 
 Consulta:
 ${message}
-    `.trim();
+        `.trim();
 
-    const whatsappUrl =
-        `https://wa.me/${whatsappNumber}?text=` +
-        encodeURIComponent(whatsappMessage);
 
-    formMessage.textContent =
-        "Abriendo WhatsApp para enviar la consulta...";
+        const whatsappUrl =
+            `https://wa.me/${whatsappNumber}?text=` +
+            encodeURIComponent(whatsappMessage);
 
-    window.open(whatsappUrl, "_blank");
 
-});
+        if (formMessage) {
+
+            formMessage.textContent =
+                "Abriendo WhatsApp para enviar tu consulta...";
+
+        }
+
+
+        window.open(
+            whatsappUrl,
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+    });
+
+}
 
 
 // AÑO AUTOMÁTICO
 
-currentYear.textContent = new Date().getFullYear();
+if (currentYear) {
+
+    currentYear.textContent =
+        new Date().getFullYear();
+
+}
 
 
 // ANIMACIONES AL HACER SCROLL
 
-const revealElements = document.querySelectorAll(".reveal");
+const revealElements =
+    document.querySelectorAll(".reveal");
 
-const revealObserver = new IntersectionObserver(
-    (entries) => {
 
-        entries.forEach((entry) => {
+if ("IntersectionObserver" in window) {
 
-            if (entry.isIntersecting) {
+    const revealObserver =
+        new IntersectionObserver(
 
-                entry.target.classList.add("visible");
+            (entries) => {
 
-                revealObserver.unobserve(entry.target);
+                entries.forEach((entry) => {
 
+                    if (entry.isIntersecting) {
+
+                        entry.target
+                            .classList
+                            .add("visible");
+
+                        revealObserver
+                            .unobserve(entry.target);
+
+                    }
+
+                });
+
+            },
+
+            {
+                threshold: 0.12
             }
 
-        });
+        );
 
-    },
-    {
-        threshold: 0.15
-    }
-);
 
-revealElements.forEach((element) => {
-    revealObserver.observe(element);
-});
+    revealElements.forEach((element) => {
+
+        revealObserver.observe(element);
+
+    });
+
+} else {
+
+    revealElements.forEach((element) => {
+
+        element.classList.add("visible");
+
+    });
+
+}
 
 
 // CONTADORES ANIMADOS
 
-const counters = document.querySelectorAll(".counter");
+const counters =
+    document.querySelectorAll(".counter");
+
+const statsSection =
+    document.querySelector(".stats-section");
 
 let countersStarted = false;
 
-const statsSection = document.querySelector(".stats-section");
 
-const countersObserver = new IntersectionObserver(
-    (entries) => {
+function startCounters() {
 
-        entries.forEach((entry) => {
+    if (countersStarted) {
+        return;
+    }
 
-            if (entry.isIntersecting && !countersStarted) {
+    countersStarted = true;
 
-                countersStarted = true;
 
-                counters.forEach((counter) => {
+    counters.forEach((counter) => {
 
-                    const target = Number(
-                        counter.getAttribute("data-target")
-                    );
+        const target =
+            Number(
+                counter.getAttribute("data-target")
+            );
 
-                    let current = 0;
 
-                    const duration = 1500;
-                    const intervalTime = 30;
-                    const totalSteps = duration / intervalTime;
-                    const increment = target / totalSteps;
+        let current = 0;
 
-                    const timer = setInterval(() => {
+        const duration = 1500;
 
-                        current += increment;
+        const intervalTime = 30;
 
-                        if (current >= target) {
+        const totalSteps =
+            duration / intervalTime;
 
-                            counter.textContent = target;
-                            clearInterval(timer);
+        const increment =
+            target / totalSteps;
 
-                        } else {
 
-                            counter.textContent = Math.floor(current);
+        const timer = setInterval(() => {
 
-                        }
+            current += increment;
 
-                    }, intervalTime);
 
-                });
+            if (current >= target) {
+
+                counter.textContent =
+                    target;
+
+                clearInterval(timer);
+
+            } else {
+
+                counter.textContent =
+                    Math.floor(current);
 
             }
 
-        });
+        }, intervalTime);
 
-    },
-    {
-        threshold: 0.4
-    }
-);
+    });
 
-if (statsSection) {
-    countersObserver.observe(statsSection);
 }
-// IMAGEN DE RESPALDO SI FALTA ALGÚN ARCHIVO
 
-const siteImages = document.querySelectorAll("img");
+
+if (
+    statsSection &&
+    "IntersectionObserver" in window
+) {
+
+    const countersObserver =
+        new IntersectionObserver(
+
+            (entries) => {
+
+                entries.forEach((entry) => {
+
+                    if (entry.isIntersecting) {
+
+                        startCounters();
+
+                        countersObserver
+                            .unobserve(entry.target);
+
+                    }
+
+                });
+
+            },
+
+            {
+                threshold: 0.35
+            }
+
+        );
+
+
+    countersObserver
+        .observe(statsSection);
+
+} else {
+
+    startCounters();
+
+}
+
+
+// IMAGEN DE RESPALDO
+
+const siteImages =
+    document.querySelectorAll("img");
+
 
 siteImages.forEach((image) => {
 
-    image.addEventListener("error", () => {
+    image.addEventListener(
+        "error",
+        () => {
 
-        image.style.display = "none";
+            image.style.display =
+                "none";
 
-        const parent = image.parentElement;
 
-        parent.classList.add("image-error");
+            const parent =
+                image.parentElement;
 
-        if (!parent.querySelector(".image-error-message")) {
 
-            const message = document.createElement("div");
+            if (!parent) {
+                return;
+            }
 
-            message.className = "image-error-message";
 
-            message.innerHTML = `
-                <i class="fa-solid fa-image"></i>
-                <span>Agregar imagen</span>
-            `;
+            parent.classList
+                .add("image-error");
 
-            parent.appendChild(message);
+
+            if (
+                !parent.querySelector(
+                    ".image-error-message"
+                )
+            ) {
+
+                const message =
+                    document.createElement("div");
+
+
+                message.className =
+                    "image-error-message";
+
+
+                message.innerHTML = `
+                    <i class="fa-solid fa-image"></i>
+                    <span>Imagen próximamente</span>
+                `;
+
+
+                parent.appendChild(message);
+
+            }
 
         }
-
-    });
+    );
 
 });
